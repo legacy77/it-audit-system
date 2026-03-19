@@ -1,0 +1,112 @@
+/* ===== DESIGN TOKENS ===== */
+:root {
+    /* Primary Palette */
+    --primary-50: #eef2ff;
+    --primary-100: #dbe4ff;
+    --primary-200: #bac8ff;
+    --primary-300: #91a7ff;
+    --primary-400: #748ffc;
+    --primary-500: #5c7cfa;
+    --primary-600: #4c6ef5;
+    --primary-700: #4263eb;
+    --primary-800: #3b5bdb;
+    --primary-900: #364fc7;
+
+    /* Neutral Palette */
+    --gray-50: #f8f9fc;
+    --gray-100: #f1f3f9;
+    --gray-200: #e2e6f0;
+    --gray-300: #cdd3e0;
+    --gray-400: #a3adc2;
+    --gray-500: #7c879e;
+    --gray-600: #5a6478;
+    --gray-700: #3d4559;
+    --gray-800: #272e3f;
+    --gray-900: #1a1f2e;
+    --gray-950: #0f1219;
+
+    /* Semantic Colors */
+    --success-light: #d3f9d8;
+    --success: #40c057;
+    --success-dark: #2f9e44;
+    --warning-light: #fff3bf;
+    --warning: #fab005;
+    --warning-dark: #f59f00;
+    --danger-light: #ffe3e3;
+    --danger: #fa5252;
+    --danger-dark: #e03131;
+    --info-light: #d0ebff;
+    --info: #339af0;
+    --info-dark: #1c7ed6;
+
+    /* Risk Colors */
+    --risk-critical: #e03131;
+    --risk-high: #f76707;
+    --risk-medium: #fab005;
+    --risk-low: #40c057;
+    --risk-very-low: #339af0;
+
+    /* Background */
+    --bg-body: #0d1117;
+    --bg-surface: #161b22;
+    --bg-card: #1c2333;
+    --bg-card-hover: #222b3d;
+    --bg-elevated: #243049;
+    --bg-input: #0d1117;
+    --bg-modal: #1c2333;
+
+    /* Text */
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --text-inverse: #0d1117;
+
+    /* Borders */
+    --border-default: #30363d;
+    --border-muted: #21262d;
+    --border-focus: var(--primary-500);
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-xs: 0.6875rem;
+    --font-sm: 0.8125rem;
+    --font-base: 0.9375rem;
+    --font-md: 1.0625rem;
+    --font-lg: 1.25rem;
+    --font-xl: 1.5rem;
+    --font-2xl: 1.875rem;
+    --font-3xl: 2.25rem;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+    --shadow-glow: 0 0 20px rgba(92,124,250,0.15);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* Layout */
+    --sidebar-width: 260px;
+    --topbar-height: 64px;
+}
