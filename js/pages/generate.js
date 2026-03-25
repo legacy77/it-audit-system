@@ -177,7 +177,7 @@ const GeneratePage = {
             `}
 
             <!-- GRC Mapping -->
-            <h2>6. Pemetaan GRC</h2>
+            <h2>6. Pemetaan GRC (Kontrol)</h2>
             ${grcControls.length === 0
                 ? '<p>Belum ada pemetaan kontrol GRC.</p>'
                 : `
@@ -186,26 +186,62 @@ const GeneratePage = {
                         <tr><th>Control ID</th><th>Nama Kontrol</th><th>Framework</th><th>Status</th><th>Temuan Terkait</th></tr>
                     </thead>
                     <tbody>
-                        ${grcControls.filter(c => {
-                            return c.linkedFindings.some(fid => findings.find(f => f.id === fid));
-                        }).map(c => {
-                            const linked = c.linkedFindings.filter(fid => findings.find(f => f.id === fid)).map(fid => findings.find(f => f.id === fid));
+                        ${grcControls.map(c => {
+                            const linkedFromFindings = findings.filter(f => (f.grcControls || []).includes(c.id));
+                            const linkedFromControl = (c.linkedFindings || []).map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                            const allLinked = [...new Map([...linkedFromFindings, ...linkedFromControl].map(f => [f.id, f])).values()];
+                            
+                            if (allLinked.length === 0) return '';
+
                             return `
                             <tr>
                                 <td style="font-weight:600">${Utils.escapeHtml(c.controlId)}</td>
                                 <td>${Utils.escapeHtml(c.title)}</td>
                                 <td>${Utils.escapeHtml(c.framework)}</td>
                                 <td style="font-weight:600;color:${c.status === 'implemented' ? '#40c057' : c.status === 'partial' ? '#fab005' : '#e03131'}">${Utils.getGRCControlStatusLabel(c.status)}</td>
-                                <td>${linked.map(f => Utils.escapeHtml(f.title)).join(', ')}</td>
+                                <td>${allLinked.map(f => Utils.escapeHtml(f.title)).join(', ')}</td>
                             </tr>`;
                         }).join('')}
-                        ${grcControls.filter(c => c.linkedFindings.some(fid => findings.find(f => f.id === fid))).length === 0 ? '<tr><td colspan="5" style="text-align:center;color:#a0aec0">Tidak ada kontrol terkait temuan audit ini</td></tr>' : ''}
+                        ${grcControls.every(c => !findings.some(f => (f.grcControls||[]).includes(c.id)) && !c.linkedFindings.some(fid => findings.find(f => f.id === fid))) ? '<tr><td colspan="5" style="text-align:center;color:#a0aec0">Tidak ada kontrol terkait temuan audit ini</td></tr>' : ''}
+                    </tbody>
+                </table>
+            `}
+
+            <!-- GRC Risk Mapping -->
+            <h2>7. Pemetaan Risiko GRC</h2>
+            ${grcRisks.length === 0
+                ? '<p>Belum ada pemetaan risiko GRC.</p>'
+                : `
+                <table style="width:100%">
+                    <thead>
+                        <tr><th>Risk ID</th><th>Nama Risiko</th><th>Category</th><th>Risk Level</th><th>Temuan Terkait</th></tr>
+                    </thead>
+                    <tbody>
+                        ${grcRisks.map(r => {
+                            const linkedFromFindings = findings.filter(f => (f.grcRisks || []).includes(r.id));
+                            const linkedFromRisk = (r.linkedFindings || []).map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                            const allLinked = [...new Map([...linkedFromFindings, ...linkedFromRisk].map(f => [f.id, f])).values()];
+                            
+                            if (allLinked.length === 0) return '';
+                            
+                            const score = r.residualLikelihood * r.residualImpact;
+                            const rk = Utils.getRiskLevel(score);
+
+                            return `
+                            <tr>
+                                <td style="font-weight:600">${Utils.escapeHtml(r.riskId)}</td>
+                                <td>${Utils.escapeHtml(r.title)}</td>
+                                <td>${Utils.escapeHtml(r.category)}</td>
+                                <td style="color:${rk.color};font-weight:600">${rk.level}</td>
+                                <td>${allLinked.map(f => Utils.escapeHtml(f.title)).join(', ')}</td>
+                            </tr>`;
+                        }).join('')}
                     </tbody>
                 </table>
             `}
 
             <!-- Recommendations Summary -->
-            <h2>7. Ringkasan Rekomendasi</h2>
+            <h2>8. Ringkasan Rekomendasi</h2>
             ${findings.length === 0
                 ? '<p>Tidak ada rekomendasi.</p>'
                 : `

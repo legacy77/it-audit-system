@@ -51,7 +51,11 @@ const GRCPage = {
         </div>
         <div class="grc-controls-list">
             ${controls.map(c => {
-                const linked = c.linkedFindings.map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                const linkedFromFindings = findings.filter(f => (f.grcControls || []).includes(c.id));
+                const linkedFromControl = (c.linkedFindings || []).map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                // Combine and unique by ID
+                const allLinked = [...new Map([...linkedFromFindings, ...linkedFromControl].map(f => [f.id, f])).values()];
+
                 return `
                 <div class="grc-control-card animate-up">
                     <div class="grc-control-header">
@@ -64,7 +68,7 @@ const GRCPage = {
                     </div>
                     <p class="grc-control-desc">${Utils.escapeHtml(c.description)}</p>
                     <div class="grc-control-meta"><span>📚 ${Utils.escapeHtml(c.framework)}</span><span>🏷️ ${Utils.escapeHtml(c.domain)}</span></div>
-                    ${linked.length > 0 ? `<div class="grc-linked-findings"><strong>Temuan Terkait:</strong>${linked.map(f => `<span class="badge badge-${Utils.getSeverityClass(f.severity)}" title="${Utils.escapeHtml(f.title)}">${Utils.escapeHtml(f.title)}</span>`).join('')}</div>` : '<div class="grc-no-findings">✅ Tidak ada temuan terkait</div>'}
+                    ${allLinked.length > 0 ? `<div class="grc-linked-findings"><strong>Temuan Terkait:</strong>${allLinked.map(f => `<span class="badge badge-${Utils.getSeverityClass(f.severity)}" title="${Utils.escapeHtml(f.title)}">${Utils.escapeHtml(f.title)}</span>`).join('')}</div>` : '<div class="grc-no-findings">✅ Tidak ada temuan terkait</div>'}
                 </div>`;
 
             }).join('')}
@@ -98,7 +102,11 @@ const GRCPage = {
                 const resScore = r.residualLikelihood * r.residualImpact;
                 const inhRisk = Utils.getRiskLevel(inhScore);
                 const resRisk = Utils.getRiskLevel(resScore);
-                const linked = r.linkedFindings.map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                
+                const linkedFromFindings = findings.filter(f => (f.grcRisks || []).includes(r.id));
+                const linkedFromRisk = (r.linkedFindings || []).map(fid => findings.find(f => f.id === fid)).filter(Boolean);
+                const allLinked = [...new Map([...linkedFromFindings, ...linkedFromRisk].map(f => [f.id, f])).values()];
+
                 const ctrl = r.controls.map(cid => controls.find(c => c.id === cid)).filter(Boolean);
                 return `
                 <div class="grc-risk-card animate-up">
@@ -119,7 +127,7 @@ const GRCPage = {
                     </div>
                     <div class="grc-control-meta"><span>📁 ${Utils.escapeHtml(r.category)}</span><span>👤 ${Utils.escapeHtml(r.owner)}</span></div>
                     ${ctrl.length > 0 ? `<div class="grc-linked-findings"><strong>Kontrol:</strong>${ctrl.map(c => `<span class="badge badge-${Utils.getGRCControlStatusClass(c.status)}">${Utils.escapeHtml(c.controlId+' — '+c.title)}</span>`).join('')}</div>` : ''}
-                    ${linked.length > 0 ? `<div class="grc-linked-findings"><strong>Temuan:</strong>${linked.map(f => `<span class="badge badge-${Utils.getSeverityClass(f.severity)}">${Utils.escapeHtml(f.title)}</span>`).join('')}</div>` : ''}
+                    ${allLinked.length > 0 ? `<div class="grc-linked-findings"><strong>Temuan:</strong>${allLinked.map(f => `<span class="badge badge-${Utils.getSeverityClass(f.severity)}">${Utils.escapeHtml(f.title)}</span>`).join('')}</div>` : ''}
                 </div>`;
             }).join('')}
         </div>`;

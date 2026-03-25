@@ -192,6 +192,30 @@ const FieldworkPage = {
                 <label>Rekomendasi</label>
                 <textarea id="ff-rec" placeholder="Rekomendasi perbaikan...">${Utils.escapeHtml(finding?.recommendation || '')}</textarea>
             </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Map to GRC Controls</label>
+                    <div class="grc-mapping-select" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-muted);padding:var(--space-2);border-radius:var(--radius-sm)">
+                        ${Store.getGRCControls().map(c => `
+                            <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-xs);margin-bottom:var(--space-1);cursor:pointer">
+                                <input type="checkbox" name="ff-grc-controls" value="${c.id}" ${(finding?.grcControls || []).includes(c.id) ? 'checked' : ''}>
+                                ${Utils.escapeHtml(c.controlId)} — ${Utils.escapeHtml(c.title)}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Map to GRC Risks</label>
+                    <div class="grc-mapping-select" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-muted);padding:var(--space-2);border-radius:var(--radius-sm)">
+                        ${Store.getGRCRisks().map(r => `
+                            <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-xs);margin-bottom:var(--space-1);cursor:pointer">
+                                <input type="checkbox" name="ff-grc-risks" value="${r.id}" ${(finding?.grcRisks || []).includes(r.id) ? 'checked' : ''}>
+                                ${Utils.escapeHtml(r.riskId)} — ${Utils.escapeHtml(r.title)}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
         </form>`;
 
         const footer = `
@@ -205,6 +229,9 @@ const FieldworkPage = {
             const title = document.getElementById('ff-title').value.trim();
             if (!title) { Utils.showToast('Judul finding wajib diisi', 'error'); return; }
 
+            const selectedControls = Array.from(document.querySelectorAll('input[name="ff-grc-controls"]:checked')).map(cb => cb.value);
+            const selectedRisks = Array.from(document.querySelectorAll('input[name="ff-grc-risks"]:checked')).map(cb => cb.value);
+
             Store.saveFinding({
                 id: finding?.id,
                 planId,
@@ -214,6 +241,8 @@ const FieldworkPage = {
                 description: document.getElementById('ff-desc').value.trim(),
                 evidence: document.getElementById('ff-evidence').value.trim(),
                 recommendation: document.getElementById('ff-rec').value.trim(),
+                grcControls: selectedControls,
+                grcRisks: selectedRisks
             });
 
             Utils.closeModal();
