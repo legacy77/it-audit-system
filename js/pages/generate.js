@@ -45,6 +45,8 @@ const GeneratePage = {
         if (!plan) return '';
 
         const findings = Store.getFindings(planId);
+        const followups = Store.getFollowups();
+        const grcControls = Store.getGRCControls();
         const riskAreas = plan.riskAreas || [];
         const checklist = plan.checklistItems || [];
         const completedChecklist = checklist.filter(c => c.completed).length;
@@ -149,8 +151,61 @@ const GeneratePage = {
                 `).join('')
             }
 
+            <!-- Status Tindak Lanjut -->
+            <h2>5. Status Tindak Lanjut</h2>
+            ${findings.length === 0
+                ? '<p>Tidak ada temuan.</p>'
+                : `
+                <table style="width:100%">
+                    <thead>
+                        <tr><th>No</th><th>Temuan</th><th>PIC</th><th>Status</th><th>Target</th></tr>
+                    </thead>
+                    <tbody>
+                        ${findings.map((f, i) => {
+                            const fu = followups.find(x => x.findingId === f.id);
+                            return `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${Utils.escapeHtml(f.title)}</td>
+                                <td>${Utils.escapeHtml(fu?.pic || '-')}</td>
+                                <td style="font-weight:600;color:${fu?.status === 'resolved' || fu?.status === 'verified' ? '#40c057' : fu?.status === 'in-progress' ? '#fab005' : '#868e96'}">${Utils.getFollowupStatusLabel(fu?.status || 'open')}</td>
+                                <td>${fu?.targetDate ? Utils.formatDate(fu.targetDate) : '-'}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `}
+
+            <!-- GRC Mapping -->
+            <h2>6. Pemetaan GRC</h2>
+            ${grcControls.length === 0
+                ? '<p>Belum ada pemetaan kontrol GRC.</p>'
+                : `
+                <table style="width:100%">
+                    <thead>
+                        <tr><th>Control ID</th><th>Nama Kontrol</th><th>Framework</th><th>Status</th><th>Temuan Terkait</th></tr>
+                    </thead>
+                    <tbody>
+                        ${grcControls.filter(c => {
+                            return c.linkedFindings.some(fid => findings.find(f => f.id === fid));
+                        }).map(c => {
+                            const linked = c.linkedFindings.filter(fid => findings.find(f => f.id === fid)).map(fid => findings.find(f => f.id === fid));
+                            return `
+                            <tr>
+                                <td style="font-weight:600">${Utils.escapeHtml(c.controlId)}</td>
+                                <td>${Utils.escapeHtml(c.title)}</td>
+                                <td>${Utils.escapeHtml(c.framework)}</td>
+                                <td style="font-weight:600;color:${c.status === 'implemented' ? '#40c057' : c.status === 'partial' ? '#fab005' : '#e03131'}">${Utils.getGRCControlStatusLabel(c.status)}</td>
+                                <td>${linked.map(f => Utils.escapeHtml(f.title)).join(', ')}</td>
+                            </tr>`;
+                        }).join('')}
+                        ${grcControls.filter(c => c.linkedFindings.some(fid => findings.find(f => f.id === fid))).length === 0 ? '<tr><td colspan="5" style="text-align:center;color:#a0aec0">Tidak ada kontrol terkait temuan audit ini</td></tr>' : ''}
+                    </tbody>
+                </table>
+            `}
+
             <!-- Recommendations Summary -->
-            <h2>5. Ringkasan Rekomendasi</h2>
+            <h2>7. Ringkasan Rekomendasi</h2>
             ${findings.length === 0
                 ? '<p>Tidak ada rekomendasi.</p>'
                 : `

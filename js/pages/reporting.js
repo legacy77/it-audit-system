@@ -5,10 +5,12 @@ const ReportingPage = {
     render() {
         const plans = Store.getPlans();
         const allFindings = Store.getFindings();
+        const followups = Store.getFollowups();
 
         // Aggregated stats
         const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         allFindings.forEach(f => { if (severityCounts[f.severity] !== undefined) severityCounts[f.severity]++; });
+        const resolvedCount = followups.filter(f => f.status === 'resolved' || f.status === 'verified').length;
 
         return `
         <!-- Filters -->
@@ -27,6 +29,12 @@ const ReportingPage = {
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
+            </select>
+            <select id="filter-followup-status">
+                <option value="">Semua Tindak Lanjut</option>
+                <option value="open">Belum Ditindaklanjuti</option>
+                <option value="in-progress">Dalam Proses</option>
+                <option value="resolved">Selesai</option>
             </select>
         </div>
 
@@ -47,6 +55,10 @@ const ReportingPage = {
             ${Components.statCard(
                 '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
                 severityCounts.medium + severityCounts.low, 'Medium & Low', 'yellow', 300
+            )}
+            ${Components.statCard(
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                resolvedCount, 'Sudah Ditindaklanjuti', 'green', 400
             )}
         </div>
 
@@ -81,20 +93,24 @@ const ReportingPage = {
                             <th>Audit</th>
                             <th>Kategori</th>
                             <th>Severity</th>
+                            <th>Tindak Lanjut</th>
                             <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody id="findings-tbody">
                         ${allFindings.length === 0
-                            ? '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:var(--space-8)">Belum ada findings</td></tr>'
+                            ? '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:var(--space-8)">Belum ada findings</td></tr>'
                             : allFindings.map(f => {
                                 const plan = plans.find(p => p.id === f.planId);
+                                const fu = followups.find(x => x.findingId === f.id);
+                                const fuStatus = fu ? fu.status : 'open';
                                 return `
-                                <tr class="finding-row" data-plan="${f.planId}" data-severity="${f.severity}" data-title="${Utils.escapeHtml(f.title.toLowerCase())}">
+                                <tr class="finding-row" data-plan="${f.planId}" data-severity="${f.severity}" data-title="${Utils.escapeHtml(f.title.toLowerCase())}" data-followup="${fuStatus}">
                                     <td style="font-weight:600">${Utils.escapeHtml(f.title)}</td>
                                     <td style="font-size:var(--font-xs)">${Utils.escapeHtml(plan?.title || '-')}</td>
                                     <td>${Utils.escapeHtml(f.category)}</td>
                                     <td>${Components.badge(f.severity.toUpperCase(), Utils.getSeverityClass(f.severity))}</td>
+                                    <td><span class="badge badge-${Utils.getFollowupStatusClass(fuStatus)}">${Utils.getFollowupStatusLabel(fuStatus)}</span></td>
                                     <td style="font-size:var(--font-xs)">${Utils.formatDate(f.createdAt)}</td>
                                 </tr>`;
                             }).join('')
@@ -157,17 +173,20 @@ const ReportingPage = {
             const search = (document.getElementById('finding-search')?.value || '').toLowerCase();
             const planFilter = document.getElementById('filter-plan')?.value || '';
             const sevFilter = document.getElementById('filter-severity')?.value || '';
+            const fuFilter = document.getElementById('filter-followup-status')?.value || '';
 
             document.querySelectorAll('.finding-row').forEach(row => {
                 const matchPlan = !planFilter || row.dataset.plan === planFilter;
                 const matchSev = !sevFilter || row.dataset.severity === sevFilter;
                 const matchSearch = !search || row.dataset.title.includes(search);
-                row.style.display = matchPlan && matchSev && matchSearch ? '' : 'none';
+                const matchFu = !fuFilter || row.dataset.followup === fuFilter;
+                row.style.display = matchPlan && matchSev && matchSearch && matchFu ? '' : 'none';
             });
         };
 
         document.getElementById('finding-search')?.addEventListener('input', filterFn);
         document.getElementById('filter-plan')?.addEventListener('change', filterFn);
         document.getElementById('filter-severity')?.addEventListener('change', filterFn);
+        document.getElementById('filter-followup-status')?.addEventListener('change', filterFn);
     }
 };

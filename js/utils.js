@@ -109,5 +109,75 @@ const Utils = {
     // Generate unique checklist id
     generateChecklistId() {
         return 'cl_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    },
+
+    // Followup status helpers
+    getFollowupStatusLabel(status) {
+        const map = {
+            'open': 'Belum Ditindaklanjuti',
+            'in-progress': 'Dalam Proses',
+            'resolved': 'Selesai',
+            'verified': 'Terverifikasi'
+        };
+        return map[status] || status;
+    },
+
+    getFollowupStatusClass(status) {
+        const map = {
+            'open': 'open',
+            'in-progress': 'in-progress',
+            'resolved': 'resolved',
+            'verified': 'verified'
+        };
+        return map[status] || 'open';
+    },
+
+    getSeverityLabel(severity) {
+        const map = {
+            'critical': 'Perlu Segera Ditangani',
+            'high': 'Prioritas Tinggi',
+            'medium': 'Prioritas Sedang',
+            'low': 'Prioritas Rendah'
+        };
+        return map[severity] || severity;
+    },
+
+    // GRC helpers
+    getGRCControlStatusLabel(status) {
+        const map = {
+            'implemented': 'Diterapkan',
+            'partial': 'Sebagian',
+            'not-implemented': 'Belum Diterapkan',
+            'not-applicable': 'N/A'
+        };
+        return map[status] || status;
+    },
+
+    getGRCControlStatusClass(status) {
+        const map = {
+            'implemented': 'completed',
+            'partial': 'in-progress',
+            'not-implemented': 'critical',
+            'not-applicable': 'draft'
+        };
+        return map[status] || 'draft';
+    },
+
+    getComplianceStatusLabel(status) {
+        const map = {
+            'compliant': 'Patuh',
+            'partial': 'Sebagian Patuh',
+            'non-compliant': 'Tidak Patuh'
+        };
+        return map[status] || status;
+    },
+
+    getComplianceStatusClass(status) {
+        const map = {
+            'compliant': 'completed',
+            'partial': 'in-progress',
+            'non-compliant': 'critical'
+        };
+        return map[status] || 'draft';
     }
 };

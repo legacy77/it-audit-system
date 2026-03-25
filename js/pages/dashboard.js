@@ -1,11 +1,14 @@
 /**
- * Dashboard Page
+ * Dashboard Page — Integrated with Followup & GRC
  */
 const DashboardPage = {
     render() {
         const plans = Store.getPlans();
         const findings = Store.getFindings();
         const activities = Store.getActivities();
+        const followups = Store.getFollowups();
+        const grcControls = Store.getGRCControls();
+        const grcCompliance = Store.getGRCCompliance();
 
         // Stats
         const totalPlans = plans.length;
@@ -13,6 +16,22 @@ const DashboardPage = {
         const totalFindings = findings.length;
         const criticalFindings = findings.filter(f => f.severity === 'critical').length;
         const highFindings = findings.filter(f => f.severity === 'high').length;
+
+        // Followup stats
+        const resolved = followups.filter(f => f.status === 'resolved' || f.status === 'verified').length;
+        const resolvedPct = totalFindings > 0 ? Math.round((resolved / totalFindings) * 100) : 0;
+        const overdue = followups.filter(f => {
+            if (f.status === 'resolved' || f.status === 'verified') return false;
+            return f.targetDate && new Date(f.targetDate) < new Date();
+        }).length;
+
+        // GRC compliance score
+        const implControls = grcControls.filter(c => c.status === 'implemented').length;
+        const partControls = grcControls.filter(c => c.status === 'partial').length;
+        const grcScore = grcControls.length > 0
+            ? Math.round(((implControls * 100 + partControls * 50) / (grcControls.length * 100)) * 100)
+            : 0;
+        const nonCompliant = grcCompliance.filter(c => c.status === 'non-compliant').length;
 
         // Risk distribution
         const riskCounts = { critical: 0, high: 0, medium: 0, low: 0, veryLow: 0 };
@@ -85,16 +104,23 @@ const DashboardPage = {
                 </div>
             </div>
 
-            <!-- Findings by Severity -->
+            <!-- Followup Progress (NEW) -->
             <div class="card animate-up" style="animation-delay:100ms">
                 <div class="card-header">
-                    <h3 class="card-title">Findings per Severity</h3>
+                    <h3 class="card-title">Progress Tindak Lanjut</h3>
+                    <a href="#followup" style="font-size:var(--font-xs);color:var(--primary-400)">Lihat detail →</a>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-                    ${this._severityRow('Critical', criticalFindings, totalFindings, 'var(--risk-critical)')}
-                    ${this._severityRow('High', highFindings, totalFindings, 'var(--risk-high)')}
-                    ${this._severityRow('Medium', findings.filter(f => f.severity === 'medium').length, totalFindings, 'var(--risk-medium)')}
-                    ${this._severityRow('Low', findings.filter(f => f.severity === 'low').length, totalFindings, 'var(--risk-low)')}
+                <div style="text-align:center;margin-bottom:var(--space-4)">
+                    <div style="font-size:var(--font-3xl);font-weight:800;color:${resolvedPct >= 70 ? 'var(--success)' : resolvedPct >= 40 ? 'var(--warning)' : 'var(--danger)'}">${resolvedPct}%</div>
+                    <div style="font-size:var(--font-xs);color:var(--text-muted)">Temuan Ditindaklanjuti</div>
+                </div>
+                <div class="progress-bar" style="height:10px;margin-bottom:var(--space-4)">
+                    <div class="progress-fill" style="width:${resolvedPct}%;background:linear-gradient(90deg, var(--success), #69db7c)"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:var(--font-xs);color:var(--text-muted)">
+                    <span>✅ Selesai: ${resolved}</span>
+                    <span>⏳ Proses: ${followups.filter(f => f.status === 'in-progress').length}</span>
+                    <span style="color:${overdue > 0 ? 'var(--danger)' : 'var(--text-muted)'}">⚠ Terlambat: ${overdue}</span>
                 </div>
             </div>
 
@@ -117,8 +143,50 @@ const DashboardPage = {
                 </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- GRC Compliance Score (NEW) -->
             <div class="card animate-up" style="animation-delay:300ms">
+                <div class="card-header">
+                    <h3 class="card-title">GRC Overview</h3>
+                    <a href="#grc" style="font-size:var(--font-xs);color:var(--primary-400)">Lihat detail →</a>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                    <div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)">
+                            <span style="font-size:var(--font-sm);font-weight:600">Skor Kepatuhan Kontrol</span>
+                            <span style="font-size:var(--font-sm);font-weight:800;color:${grcScore >= 70 ? 'var(--success)' : grcScore >= 40 ? 'var(--warning)' : 'var(--danger)'}">${grcScore}%</span>
+                        </div>
+                        <div class="progress-bar" style="height:8px">
+                            <div class="progress-fill" style="width:${grcScore}%;background:${grcScore >= 70 ? 'var(--success)' : grcScore >= 40 ? 'var(--warning)' : 'var(--danger)'}"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;font-size:var(--font-xs)">
+                        <span class="badge badge-completed">✓ ${implControls} Diterapkan</span>
+                        <span class="badge badge-in-progress">◑ ${partControls} Sebagian</span>
+                        <span class="badge badge-critical">✕ ${grcControls.filter(c => c.status === 'not-implemented').length} Belum</span>
+                    </div>
+                    ${nonCompliant > 0 ? `
+                        <div style="background:rgba(224,49,49,0.08);padding:var(--space-3);border-radius:var(--radius-sm);border-left:3px solid var(--danger);font-size:var(--font-xs)">
+                            ⚠️ <strong>${nonCompliant} regulasi</strong> belum terpenuhi
+                        </div>
+                    ` : '<div style="font-size:var(--font-xs);color:var(--success)">✅ Semua regulasi terpenuhi</div>'}
+                </div>
+            </div>
+
+            <!-- Findings by Severity -->
+            <div class="card animate-up" style="animation-delay:400ms">
+                <div class="card-header">
+                    <h3 class="card-title">Findings per Severity</h3>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                    ${this._severityRow('Critical', criticalFindings, totalFindings, 'var(--risk-critical)')}
+                    ${this._severityRow('High', highFindings, totalFindings, 'var(--risk-high)')}
+                    ${this._severityRow('Medium', findings.filter(f => f.severity === 'medium').length, totalFindings, 'var(--risk-medium)')}
+                    ${this._severityRow('Low', findings.filter(f => f.severity === 'low').length, totalFindings, 'var(--risk-low)')}
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card animate-up" style="animation-delay:500ms">
                 <div class="card-header">
                     <h3 class="card-title">Aktivitas Terkini</h3>
                 </div>

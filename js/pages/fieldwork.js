@@ -45,6 +45,7 @@ const FieldworkPage = {
         if (!plan) return '<p style="color:var(--text-muted)">Audit plan tidak ditemukan</p>';
 
         const findings = Store.getFindings(planId);
+        const followups = Store.getFollowups();
         const checklist = plan.checklistItems || [];
         const completedCount = checklist.filter(c => c.completed).length;
 
@@ -82,12 +83,18 @@ const FieldworkPage = {
 
         ${findings.length === 0
             ? '<p style="color:var(--text-muted);font-size:var(--font-sm)">Belum ada finding untuk audit ini.</p>'
-            : findings.map(f => `
+            : findings.map(f => {
+                const fu = followups.find(x => x.findingId === f.id);
+                const fuStatus = fu ? fu.status : 'open';
+                const fuLabel = Utils.getFollowupStatusLabel(fuStatus);
+                const fuClass = Utils.getFollowupStatusClass(fuStatus);
+                return `
                 <div class="finding-card">
                     <div class="finding-card-header">
                         <h4>${Utils.escapeHtml(f.title)}</h4>
-                        <div style="display:flex;gap:var(--space-2);align-items:center">
+                        <div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap">
                             ${Components.badge(f.severity.toUpperCase(), Utils.getSeverityClass(f.severity))}
+                            <span class="badge badge-${fuClass}" title="Status Tindak Lanjut">${fuLabel}</span>
                             <button class="btn btn-sm btn-secondary btn-edit-finding" data-id="${f.id}" title="Edit">✏️</button>
                             <button class="btn btn-sm btn-danger btn-delete-finding" data-id="${f.id}" title="Hapus">🗑️</button>
                         </div>
@@ -96,8 +103,9 @@ const FieldworkPage = {
                     <div class="finding-detail"><strong>Deskripsi:</strong> ${Utils.escapeHtml(f.description)}</div>
                     <div class="finding-detail"><strong>Evidence:</strong> ${Utils.escapeHtml(f.evidence || '-')}</div>
                     <div class="finding-detail"><strong>Rekomendasi:</strong> ${Utils.escapeHtml(f.recommendation)}</div>
+                    ${fu ? `<div class="finding-detail" style="margin-top:var(--space-2);padding-top:var(--space-2);border-top:1px solid var(--border-muted)"><strong>PIC Tindak Lanjut:</strong> ${Utils.escapeHtml(fu.pic || '-')} ${fu.targetDate ? '· Target: ' + Utils.formatDate(fu.targetDate) : ''}</div>` : ''}
                 </div>
-            `).join('')
+            `; }).join('')
         }`;
     },
 

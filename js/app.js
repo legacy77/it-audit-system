@@ -8,6 +8,9 @@ const App = {
         fieldwork: { module: FieldworkPage, title: 'Field Audit' },
         reporting: { module: ReportingPage, title: 'Reporting' },
         generate: { module: GeneratePage, title: 'Generate Laporan' },
+        followup: { module: FollowupPage, title: 'Tindak Lanjut' },
+        executive: { module: ExecutivePage, title: 'Laporan Eksekutif' },
+        grc: { module: GRCPage, title: 'GRC — Governance, Risk, Compliance' },
     },
 
     currentPage: 'dashboard',
