@@ -1,59 +1,49 @@
-# AuditPro — Risk-Based IT Audit System
+# 🛡️ AuditPro — IT Audit System (GenZ Edition) 🚀
 
-AuditPro adalah platform audit IT berbasis risiko yang dirancang untuk menyederhanakan siklus audit mulai dari perencanaan, pelaksanaan lapangan, hingga pelaporan dan tindak lanjut. Aplikasi ini mengintegrasikan temuan audit dengan kerangka kerja **Governance, Risk, and Compliance (GRC)**.
+AuditPro itu platform audit IT paling *slay* dan *anti-ribet-ribet club*. Dari planning sampe tindak lanjut, semuanya *vibe check*-nya dapet banget. Gak perlu lagi pusing sama audit manual yang bikin *mental health* keganggu. Fr fr, audit sekarang sesimpel itu!
 
-![AuditPro Dashboard](https://raw.githubusercontent.com/legacy77/it-audit-system/main/img/preview.png) *(Preview Placeholder)*
+![AuditPro Preview](https://raw.githubusercontent.com/legacy77/it-audit-system/main/img/preview.png)
 
-## 🚀 Fitur Utama
+## ✨ Fitur-Fitur Kece (No Cap)
 
-### 1. Audit Planning & Risk Assessment
-- Perencanaan audit dengan penentuan ruang lingkup dan area risiko.
-- Penilaian risiko (Likelihood & Impact) untuk memprioritaskan area audit.
-- Checklist audit yang dapat disesuaikan.
+### 📊 Dashboard & Risk Heatmap
+- Visualisasi data yang *aesthetic* dan *premium*.
+- **Risk Heatmap:** Biar tau risiko mana yang lagi "nge-gas" (Inherent) dan mana yang udah "chill" (Residual).
+- Kesimpulan otomatis buat bos-bos biar mereka gak perlu baca laporan tebel-tebel. *Efficiency is key!*
 
-### 2. Field Audit & execution
-- Pencatatan temuan (Findings) secara real-time.
-- Kategorisasi temuan berdasarkan tingkat keparahan (Critical, High, Medium, Low).
-- Unggah bukti (evidence) dan rekomendasi perbaikan.
+### 📝 Field Audit & Finding
+- Nyatet temuan secepat kilat.
+- Kasih rating dari *Low* sampe *Critical* (kalo udah critical, fiks gawat banget!).
+- *Attach evidence* biar gak dibilang hoaks.
 
-### 3. Executive Dashboard
-- Visualisasi data temuan dalam bentuk grafik dan stat-cards.
-- **Risk Heatmap:** Visualisasi profil risiko (Inherent vs Residual) secara grafis.
-- **Automated Conclusions:** Ringkasan status audit untuk top manajemen.
+### 🧙‍♂️ Follow-Up Tracking (Wizard Style)
+- Interface-nya *auditee-friendly* parah, mirip main game.
+- Gak perlu *chat-chat* nanya status, tinggal liat progress-nya aja di sini. *Low effort, high results!*
 
-### 4. Follow-up Tracking (Auditee Friendly)
-- Antarmuka khusus auditee dengan sistem wizard yang mudah digunakan.
-- Pemantauan status tindak lanjut (Open, In Progress, Resolved).
-- Verifikasi hasil tindak lanjut oleh auditor.
+### 🏛️ GRC Integration (The Real Deal)
+- Integrasi ke **ISO 27001**, Katalog Risiko, dan Kepatuhan Regulasi.
+- Temuan audit langsung ke-map otomatis ke GRC. *Connect the dots like a pro!*
 
-### 5. GRC Integration (Governance, Risk, Compliance)
-- **Governance:** Pemetaan kontrol berbasis framework (misal: ISO 27001).
-- **Risk Register:** Pengelolaan katalog risiko organisasi.
-- **Compliance:** Pelacakan kepatuhan terhadap regulasi (Internal/Eksternal).
-- **Deep Mapping:** Integrasi langsung antara temuan audit dengan kontrol dan risiko GRC.
+### 📄 PDF Report Generator
+- Export laporan ke PDF cuma sekali klik.
+- Layout-nya rapi, *clean*, dan profesional. Langsung gas kirim ke email managemen!
 
-### 6. Professional Reporting
-- Export laporan ke format **PDF** secara instan.
-- Laporan komprehensif 8-Seksi yang mencakup detail temuan, status tindak lanjut, dan pemetaan GRC.
+## 🛠️ Tech Stack (The Humble Ones)
+- **Frontend:** Vanilla HTML5, CSS3, JavaScript. *No framework, no problem!*
+- **Persistence:** LocalStorage. Data aman nempel di browser lu.
+- **Routing:** Hash-based SPA. Gesit banget parah!
 
-## 🛠️ Tech Stack
-- **Frontend:** Vanilla HTML5, CSS3, JavaScript (Tanpa framework/library berat).
-- **Persistence:** LocalStorage (Data tersimpan di browser).
-- **Routing:** Hash-based SPA (Single Page Application).
-- **Library:** [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) untuk PDF generation.
-
-## 📦 Cara Penggunaan
-1. **Clone Repository:**
+## 🚀 Cara Gaspol!
+1. **Clone Repo:**
    ```bash
    git clone https://github.com/legacy77/it-audit-system.git
    ```
-2. **Jalankan Secara Lokal:**
-   Anda dapat membuka `index.html` langsung di browser atau menggunakan live server lokal.
-3. **Deployment:**
-   Proyek ini telah dikonfigurasi untuk [Netlify](https://www.netlify.com/). Cukup hubungkan repositori ini ke akun Netlify Anda untuk deployment otomatis.
-
-## 📄 Lisensi
-Distributed under the MIT License. See `LICENSE` for more information.
+2. **Open:**
+   Buka `index.html` dan *enjoy the vibe*.
+3. **Deploy:**
+   Udah siap tempur di **Netlify**. Tinggal konek repo, langsung *live*!
 
 ---
-Dikembangkan untuk efisiensi audit dan tata kelola IT yang lebih baik.
+
+### 🙌 Dibuat dengan ❤️ oleh **Andhika** (2026)
+*Laporan audit rapi, hati pun tenang. Gaspol!*
