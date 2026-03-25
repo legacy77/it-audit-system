@@ -47,6 +47,7 @@ const GeneratePage = {
         const findings = Store.getFindings(planId);
         const followups = Store.getFollowups();
         const grcControls = Store.getGRCControls();
+        const grcRisks = Store.getGRCRisks();
         const riskAreas = plan.riskAreas || [];
         const checklist = plan.checklistItems || [];
         const completedChecklist = checklist.filter(c => c.completed).length;
